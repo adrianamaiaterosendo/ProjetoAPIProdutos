@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using Newtonsoft.Json;
 
 
 namespace Desafio_API.Models
@@ -17,6 +19,7 @@ namespace Desafio_API.Models
         public int Quantidade{get; set;}
         public Fornecedor Fornecedor {get; set;}
 
+        [JsonIgnore]
         public ICollection <VendaProduto> VendaProdutos{get; set;}
        
 

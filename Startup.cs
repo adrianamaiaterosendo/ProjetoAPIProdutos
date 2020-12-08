@@ -16,6 +16,17 @@ using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using System.IO;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using Microsoft.OpenApi.Models;
+
+
 
 namespace Desafio_API
 {
@@ -33,16 +44,65 @@ namespace Desafio_API
         {
 
             services.AddDbContext<ApplicationDbContext>(options=> options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options=> {
+
+                string chaveSeguranca = "desafioapi_chave_seguranca_estudos_gft";
+                var chaveSimetrica = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveSeguranca));
+
+                options.TokenValidationParameters = new TokenValidationParameters{
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = "DesafioApi" ,
+                    ValidAudience = "usuario_comum",
+                    IssuerSigningKey = chaveSimetrica
+                };
+
+            });
+
+
+
+
+
             services.AddControllers();
             services.AddControllers().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
 
-          services.AddSwaggerGen(config => {
+            services.AddSwaggerGen(config => {
                 config.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo {Title="DesafioApi", Version = "v1"});
-            });
+            		     
+	            });  
 
-        }
+                services.AddSwaggerGen(options =>
+	        {
+		    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
+            In = ParameterLocation.Header, 
+            Description = "Please insert JWT with Bearer into field",
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey 
+            });
+             options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+             { 
+                new OpenApiSecurityScheme 
+                { 
+                 Reference = new OpenApiReference 
+                 { 
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer" 
+                    } 
+                    },
+                    new string[] { } 
+                    } 
+                });
+	        }) 
+           
+
+	            ;}
+
+                
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -55,6 +115,8 @@ namespace Desafio_API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
@@ -71,3 +133,4 @@ namespace Desafio_API
         }
     }
 }
+

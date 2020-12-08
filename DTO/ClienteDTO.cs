@@ -12,5 +12,19 @@ namespace Desafio_API.DTO
         public string Documento { get; set; }
 
         public DateTime DataCadastro{get; set;}
+
+
+        public static bool ValidarEmail(string strEmail)
+        {
+        string strModelo = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        if (System.Text.RegularExpressions.Regex.IsMatch(strEmail,strModelo))
+        {
+        return true;
+        }
+        else
+        {
+        return false;
+        }
+}
     }
 }
