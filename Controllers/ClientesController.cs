@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using CryptSharp;
+using Newtonsoft.Json;
 
 
 
@@ -42,10 +44,18 @@ namespace Desafio_API.Controllers
         [HttpGet]   
         public IActionResult ListaClientes (){
             var clientes = database.Clientes.ToList();
+            
+            
+            
+            
              List<ClientesGetContainer> clientesHATEOAS = new List<ClientesGetContainer>();
             foreach(var cliente in clientes){
                 ClientesGetContainer clienteHateoas = new ClientesGetContainer();
-                clienteHateoas.clientes = cliente;
+                clienteHateoas.Id = cliente.Id;
+                clienteHateoas.Nome = cliente.Nome;
+                clienteHateoas.Email = cliente.Email;
+                clienteHateoas.Documento = cliente.Documento;
+                clienteHateoas.DataCadastro = Convert.ToString(cliente.DataCadastro).Substring(0,10);
                 clienteHateoas.links = HATEOAS.GetActions(cliente.Id.ToString());
                 clientesHATEOAS.Add(clienteHateoas);
 
@@ -91,7 +101,8 @@ namespace Desafio_API.Controllers
                 } 
                 cliente.Nome =  cDTO.Nome;
                 cliente.Email = cDTO.Email;
-                cliente.Senha = cDTO.Senha;
+                var senhaCriptografada = CalculaHash(cDTO.Senha);
+                cliente.Senha = senhaCriptografada;
                 cliente.Documento = cDTO.Documento;
                 cliente.DataCadastro = DateTime.Now;
                 
@@ -110,8 +121,12 @@ namespace Desafio_API.Controllers
 
             try{
                 var clientes = database.Clientes.First(f=> f.Id == id);
-                ClientesGetContainer clienteHATEOAS = new ClientesGetContainer();
-                clienteHATEOAS.clientes = clientes;
+                ClientesContainer clienteHATEOAS = new ClientesContainer();
+                clienteHATEOAS.Id = clientes.Id;
+                clienteHATEOAS.Nome = clientes.Nome;
+                clienteHATEOAS.Email = clientes.Email;
+                clienteHATEOAS.Documento = clientes.Documento;       
+                clienteHATEOAS.DataCadastro = Convert.ToString(clientes.DataCadastro).Substring(0,10);
                 clienteHATEOAS.links = HATEOAS.GetActions(clientes.Id.ToString());
 
                              
@@ -288,66 +303,61 @@ namespace Desafio_API.Controllers
 
         [HttpGet("asc")]   
         public IActionResult ListaAlfCres(){
-            var clientes = database.Clientes.ToList();
+            var clientes = database.Clientes.OrderBy(c=> c.Nome).ToList();
 
-            List<ClientesGetContainer> clientesHATEOAS = new List<ClientesGetContainer>();
+            List<ClientesContainer> clientesHATEOAS = new List<ClientesContainer>();
             foreach(var clienteH in clientes){
-                ClientesGetContainer clienteHateoas = new ClientesGetContainer();
-                clienteHateoas.clientes = clienteH;
+                ClientesContainer clienteHateoas = new ClientesContainer();
+                clienteHateoas.Id = clienteH.Id;
+                clienteHateoas.Nome = clienteH.Nome;
+                clienteHateoas.Email = clienteH.Email;
+                clienteHateoas.Documento = clienteH.Documento;       
+                clienteHateoas.DataCadastro = Convert.ToString(clienteH.DataCadastro).Substring(0,10);
                 clienteHateoas.links = HATEOAS.GetActions(clienteH.Id.ToString());
                 clientesHATEOAS.Add(clienteHateoas);             
             }
 
-            IEnumerable<ClientesGetContainer> cliente = from word in clientesHATEOAS 
-                            orderby word.clientes.Nome
-                            select word;  
-  
-            foreach (var str in cliente)  {
-
-            }
-             
-             
-           return Ok(new{cliente}); 
+                        
+           return Ok(new{clientesHATEOAS}); 
         }
 
         [HttpGet("desc")]   
         public IActionResult ListaAlfDec(){
-            var clientes = database.Clientes.ToList();
+            var clientes = database.Clientes.OrderByDescending(c=> c.Nome).ToList();
 
-            List<ClientesGetContainer> clientesHATEOAS = new List<ClientesGetContainer>();
+             List<ClientesContainer> clientesHATEOAS = new List<ClientesContainer>();
             foreach(var clienteH in clientes){
-                ClientesGetContainer clienteHateoas = new ClientesGetContainer();
-                clienteHateoas.clientes = clienteH;
+                ClientesContainer clienteHateoas = new ClientesContainer();
+                clienteHateoas.Id = clienteH.Id;
+                clienteHateoas.Nome = clienteH.Nome;
+                clienteHateoas.Email = clienteH.Email;
+                clienteHateoas.Documento = clienteH.Documento;       
+                clienteHateoas.DataCadastro = Convert.ToString(clienteH.DataCadastro).Substring(0,10);
                 clienteHateoas.links = HATEOAS.GetActions(clienteH.Id.ToString());
-                clientesHATEOAS.Add(clienteHateoas);             
-            }
-
-            IEnumerable<ClientesGetContainer> cliente = from word in clientesHATEOAS 
-                            orderby word.clientes.Nome descending  
-                            select word;  
-  
-            foreach (var str in cliente)  {
-
-            }
+                clientesHATEOAS.Add(clienteHateoas);                        
+            } 
              
-             
-           return Ok(new{cliente}); 
+           return Ok(new{clientesHATEOAS}); 
         }
         
         [HttpGet("nome/{nome}")]   
         public IActionResult PesquisaNome(string nome){
             try{
             var cliente = database.Clientes.Where(c=> c.Nome.Contains(nome)).ToList();
-            List<ClientesGetContainer> clientesHATEOAS = new List<ClientesGetContainer>();
-            foreach(var clientes in cliente){
-                ClientesGetContainer clienteHateoas = new ClientesGetContainer();
-                clienteHateoas.clientes = clientes;
-                clienteHateoas.links = HATEOAS.GetActions(clientes.Id.ToString());
-                clientesHATEOAS.Add(clienteHateoas);
-
-
+           List<ClientesContainer> clientesHATEOAS = new List<ClientesContainer>();
+            foreach(var clienteH in cliente){
+                ClientesContainer clienteHateoas = new ClientesContainer();
+                clienteHateoas.Id = clienteH.Id;
+                clienteHateoas.Nome = clienteH.Nome;
+                clienteHateoas.Email = clienteH.Email;
+                clienteHateoas.Documento = clienteH.Documento;       
+                clienteHateoas.DataCadastro = Convert.ToString(clienteH.DataCadastro).Substring(0,10);
+                clienteHateoas.links = HATEOAS.GetActions(clienteH.Id.ToString());
+                clientesHATEOAS.Add(clienteHateoas);                        
+            }          
+        
              
-            }
+            
             if(cliente.Count == 0){
             Response.StatusCode = 404;          
             return new ObjectResult (new{msg= "Nome não disponível na lista de clientes"}); }
@@ -367,9 +377,12 @@ namespace Desafio_API.Controllers
         try{
 
         Cliente usuario = database.Clientes.First(user=> user.Email.Equals(credenciais.Email));
+        var senhaCriptografada = CalculaHash(credenciais.Senha);
+    
 
+        
         if(usuario != null){
-            if(usuario.Senha.Equals(credenciais.Senha)){
+            if(senhaCriptografada.Equals(usuario.Senha)){
 
             string chaveSeguranca = "desafioapi_chave_seguranca_estudos_gft";
             var chaveSimetrica = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(chaveSeguranca));
@@ -416,10 +429,59 @@ namespace Desafio_API.Controllers
 
         
          public class ClientesGetContainer{
+
+            [JsonIgnore]
             public Cliente clientes {get; set;}
+
+            public int Id { get; set; }        
+            public string Nome { get; set; }
+            public string Email { get; set; }
+            public string Documento { get; set; }
+
+            public string DataCadastro{get; set;}
 
             public Link[] links {get; set;}
         }
 
+         public static string CalculaHash(string Senha)
+    {
+        try
+        {
+            System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create();
+            byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(Senha);
+            byte[] hash = md5.ComputeHash(inputBytes);
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sb.Append(hash[i].ToString("X2"));
+            }
+            return sb.ToString(); // Retorna senha criptografada 
+        }
+        catch (Exception)
+        {
+            return null; // Caso encontre erro retorna nulo
+        }
     }
+
+
+        public class ClientesContainer{
+            
+            [JsonIgnore]
+            public Cliente clientes {get; set;}
+
+            public int Id { get; set; }        
+            public string Nome { get; set; }
+            public string Email { get; set; }
+            public string Documento { get; set; }
+
+            public string DataCadastro{get; set;}
+
+
+            public Link[] links {get; set;}
+        }
+
+        
+    }
+
+    
 }

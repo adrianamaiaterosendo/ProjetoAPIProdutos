@@ -54,8 +54,6 @@ namespace Desafio_API.Controllers
                 idProd.Add(prod.Id);
             }
 
-
-
             fornecedorHateoas.ProdutoId = idProd;
             
             fornecedorHateoas.links = HATEOAS.GetActions(fornecedor.Id.ToString());
@@ -93,8 +91,22 @@ namespace Desafio_API.Controllers
 
             try{
                 var fornecedores = database.Fornecedores.Include(p=> p.Produtos).First(f=> f.Id == id);
-                FornecedorGetContainer fornecedorHATEOAS = new FornecedorGetContainer();
-                fornecedorHATEOAS.fornecedores = fornecedores;
+                FornecedorContainer fornecedorHATEOAS = new FornecedorContainer();
+                fornecedorHATEOAS.Id = fornecedores.Id;
+                fornecedorHATEOAS.Nome = fornecedores.Nome;
+                fornecedorHATEOAS.CNPJ = fornecedores.CNPJ;
+
+                 var prodId = database.Produtos.Where(p=> p.Fornecedor.Id == fornecedores.Id).ToList();
+            
+                List<int> idProd = new List<int>();
+                foreach(var prod in prodId){
+                    idProd.Add(prod.Id);
+                }
+
+                fornecedorHATEOAS.ProdutoId = idProd;
+            
+
+
                 fornecedorHATEOAS.links = HATEOAS.GetActions(fornecedores.Id.ToString());
                              
             return Ok(fornecedorHATEOAS);
@@ -230,48 +242,78 @@ namespace Desafio_API.Controllers
 
         [HttpGet("asc")]   
         public IActionResult ListaAlfCres(){
-            var fornecedores = database.Fornecedores.ToList();
-
-            IEnumerable<Fornecedor> fornecedor = from word in fornecedores 
-                            orderby word.Nome
-                            select word;  
-  
-            foreach (var str in fornecedor)  {
-
-            }
+            var fornecedores = database.Fornecedores.OrderBy(f=> f.Nome).ToList();
              
-             
-           return Ok(new{fornecedor}); 
+            List<FornecedorContainer> fornecedoresHATEOAS = new List<FornecedorContainer>();
+            foreach(var fornecedor in fornecedores){
+                FornecedorContainer fornecedorHATEOAS = new FornecedorContainer();
+                fornecedorHATEOAS.Id = fornecedor.Id;
+                fornecedorHATEOAS.Nome = fornecedor.Nome;
+                fornecedorHATEOAS.CNPJ = fornecedor.CNPJ;
+
+                 var prodId = database.Produtos.Where(p=> p.Fornecedor.Id == fornecedor.Id).ToList();
+            
+                List<int> idProd = new List<int>();
+                foreach(var prod in prodId){
+                    idProd.Add(prod.Id);
+                }
+
+                fornecedorHATEOAS.ProdutoId = idProd;
+                fornecedorHATEOAS.links = HATEOAS.GetActions(fornecedor.Id.ToString());
+                fornecedoresHATEOAS.Add(fornecedorHATEOAS);
+
+            }return Ok(new{fornecedoresHATEOAS}); 
         }
 
         [HttpGet("desc")]   
         public IActionResult ListaAlfDec(){
-            var fornecedores = database.Fornecedores.ToList();
-
-            IEnumerable<Fornecedor> fornecedor = from word in fornecedores 
-                            orderby word.Nome descending  
-                            select word;  
-  
-            foreach (var str in fornecedor)  {
-
-            }
+            var fornecedores = database.Fornecedores.OrderByDescending(f=> f.Nome).ToList();
              
-             
-           return Ok(new{fornecedor}); 
+            List<FornecedorContainer> fornecedoresHATEOAS = new List<FornecedorContainer>();
+            foreach(var fornecedor in fornecedores){
+                FornecedorContainer fornecedorHATEOAS = new FornecedorContainer();
+                fornecedorHATEOAS.Id = fornecedor.Id;
+                fornecedorHATEOAS.Nome = fornecedor.Nome;
+                fornecedorHATEOAS.CNPJ = fornecedor.CNPJ;
+
+                 var prodId = database.Produtos.Where(p=> p.Fornecedor.Id == fornecedor.Id).ToList();
+            
+                List<int> idProd = new List<int>();
+                foreach(var prod in prodId){
+                    idProd.Add(prod.Id);
+                }
+
+                fornecedorHATEOAS.ProdutoId = idProd;
+                fornecedorHATEOAS.links = HATEOAS.GetActions(fornecedor.Id.ToString());
+                fornecedoresHATEOAS.Add(fornecedorHATEOAS);
+
+            }return Ok(new{fornecedoresHATEOAS}); 
         }
+
 
         [HttpGet("nome/{nome}")]   
         public IActionResult PesquisaNome(string nome){
             try{
-            var fornecedor= database.Fornecedores.Where(f=> f.Nome.Contains(nome)).ToList();
-             List<FornecedorGetContainer> fornecedoresHATEOAS = new List<FornecedorGetContainer>();
-            foreach(var fornecedores in fornecedor){
-                FornecedorGetContainer fornecedorHateoas = new FornecedorGetContainer();
-                fornecedorHateoas.fornecedores = fornecedores;
-                fornecedorHateoas.links = HATEOAS.GetActions(fornecedores.Id.ToString());
-                fornecedoresHATEOAS.Add(fornecedorHateoas);}
+            var fornecedores= database.Fornecedores.Where(f=> f.Nome.Contains(nome)).ToList();
+             List<FornecedorContainer> fornecedoresHATEOAS = new List<FornecedorContainer>();
+            foreach(var fornecedor in fornecedores){
+                FornecedorContainer fornecedorHATEOAS = new FornecedorContainer();
+                fornecedorHATEOAS.Id = fornecedor.Id;
+                fornecedorHATEOAS.Nome = fornecedor.Nome;
+                fornecedorHATEOAS.CNPJ = fornecedor.CNPJ;
 
-            if(fornecedor.Count == 0){
+                 var prodId = database.Produtos.Where(p=> p.Fornecedor.Id == fornecedor.Id).ToList();
+            
+                List<int> idProd = new List<int>();
+                foreach(var prod in prodId){
+                    idProd.Add(prod.Id);
+                }
+
+                fornecedorHATEOAS.ProdutoId = idProd;
+                fornecedorHATEOAS.links = HATEOAS.GetActions(fornecedor.Id.ToString());
+                fornecedoresHATEOAS.Add(fornecedorHATEOAS);}
+
+            if(fornecedores.Count == 0){
             Response.StatusCode = 404;          
             return new ObjectResult (new{msg= "Nome não disponível na lista de fornecedores"}); }
                            
@@ -294,6 +336,19 @@ namespace Desafio_API.Controllers
             public List<int> ProdutoId{get;set; }
 
             public Link[] links {get; set;}
+         }
+
+        public class FornecedorContainer{ 
+
+            [JsonIgnore]          
+            public Fornecedor fornecedores {get; set;}
+         
+            public int Id{get;set; }
+            public string Nome{get;set; }
+            public string CNPJ{get;set; }
+            public List<int> ProdutoId{get;set; }
+
+            public Link[] links {get; set;}
 
           
         }
@@ -305,3 +360,4 @@ namespace Desafio_API.Controllers
     }
         
 }
+

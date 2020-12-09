@@ -8,6 +8,7 @@ using Desafio_API.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Desafio_API.HATEOAS;
+using Newtonsoft.Json;
 
 
 namespace Desafio_API.Controllers
@@ -15,7 +16,7 @@ namespace Desafio_API.Controllers
     
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize]    
+    //[Authorize]    
     public class VendasController : ControllerBase
     {
         private readonly ApplicationDbContext database;
@@ -37,7 +38,23 @@ namespace Desafio_API.Controllers
              List<VendasGetContainer> vendasHATEOAS = new List<VendasGetContainer>();
             foreach(var venda in vendas){
             VendasGetContainer vendaHateoas = new VendasGetContainer();
-            vendaHateoas.vendas = venda;
+            vendaHateoas.Id = venda.Id;
+            vendaHateoas.ClienteId = venda.Cliente.Id;
+
+            var prodId = database.VendaFornecedores.Where(p=> p.VendaId == venda.Id).ToList();
+            
+            List<int> idProd = new List<int>();
+            List<int> idFunc = new List<int>();
+            foreach(var prod in prodId){
+                idProd.Add(prod.ProdutoId);
+                idFunc.Add(prod.FornecedorId);
+            }
+
+           vendaHateoas.ProdutosId = idProd;
+           vendaHateoas.FornecedorId = idFunc;
+
+            vendaHateoas.TotalCompra = venda.TotalCompra;
+            vendaHateoas.DataCompra = Convert.ToString(venda.DataCompra).Substring(0,10);
             vendaHateoas.links = HATEOAS.GetActions(venda.Id.ToString());
             vendasHATEOAS.Add(vendaHateoas);}
              
@@ -429,7 +446,21 @@ namespace Desafio_API.Controllers
         } 
 
          public class VendasGetContainer{
+
+            [JsonIgnore]
             public Venda vendas {get; set;}
+
+            public int Id { get; set; }
+
+            public int ClienteId {get; set;}
+
+            public List<int> ProdutosId {get; set;}
+
+            public List<int> FornecedorId{get; set;}
+
+            public double TotalCompra {get; set;}
+
+            public string DataCompra{get; set;}
 
             public Link[] links {get; set;}
         }

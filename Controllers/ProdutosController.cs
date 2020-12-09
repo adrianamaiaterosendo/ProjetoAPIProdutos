@@ -38,7 +38,22 @@ namespace Desafio_API.Controllers
             List<ProdutoGetContainer> produtosHATEOAS = new List<ProdutoGetContainer>();
             foreach(var produto in produtos){
             ProdutoGetContainer produtoHateoas = new ProdutoGetContainer();
-            produtoHateoas.produtos = produto;
+            produtoHateoas.Id = produto.Id;
+            produtoHateoas.Codigo = produto.Codigo;
+            produtoHateoas.Nome = produto.Nome;
+            produtoHateoas.Valor = produto.Valor;
+            produtoHateoas.Promocao = produto.Promocao;
+            produtoHateoas.ValorPromocao = produto.ValorPromocao;
+            produtoHateoas.Categoria = produto.Categoria;
+            produtoHateoas.Imagem = produto.Imagem;
+            produtoHateoas.Quantidade = produto.Quantidade;
+
+            var fornId = database.Fornecedores.First(p=> p.Id == produto.Fornecedor.Id);
+            
+            
+            produtoHateoas.FornecedorId = fornId.Id;
+
+
             produtoHateoas.links = HATEOAS.GetActions(produto.Id.ToString());
             produtosHATEOAS.Add(produtoHateoas);}
              
@@ -142,12 +157,26 @@ namespace Desafio_API.Controllers
         public IActionResult Get(int id){
 
             try{
-                var produtos = database.Produtos.Include(f=> f.Fornecedor).First(f=> f.Id == id);
-                ProdutoGetContainer produtoHATEOAS = new ProdutoGetContainer();
-                produtoHATEOAS.produtos = produtos;
-                produtoHATEOAS.links = HATEOAS.GetActions(produtos.Id.ToString());
-                             
-            return Ok(produtoHATEOAS);
+                var produto = database.Produtos.Include(f=> f.Fornecedor).First(f=> f.Id == id);
+                ProdutoGetContainer produtoHateoas = new ProdutoGetContainer();
+                produtoHateoas.Id = produto.Id;
+                produtoHateoas.Codigo = produto.Codigo;
+                produtoHateoas.Nome = produto.Nome;
+                produtoHateoas.Valor = produto.Valor;
+                produtoHateoas.Promocao = produto.Promocao;
+                produtoHateoas.ValorPromocao = produto.ValorPromocao;
+                produtoHateoas.Categoria = produto.Categoria;
+                produtoHateoas.Imagem = produto.Imagem;
+                produtoHateoas.Quantidade = produto.Quantidade;
+
+                var fornId = database.Fornecedores.First(p=> p.Id == produto.Fornecedor.Id);
+            
+            
+                produtoHateoas.FornecedorId = fornId.Id;
+                produtoHateoas.links = HATEOAS.GetActions(produto.Id.ToString());
+         
+             
+            return Ok(produtoHateoas);
                
             }catch(Exception ){  
 
@@ -317,53 +346,89 @@ namespace Desafio_API.Controllers
 
         } 
         
-         
-         
-         [HttpGet("asc")]   
+                  
+        [HttpGet("asc")]   
         public IActionResult ListaAlfCres(){
-            var produtos = database.Produtos.ToList();
+            var produtos = database.Produtos.Include(f=> f.Fornecedor).OrderBy(p=> p.Nome).ToList();
 
-            IEnumerable<Produto> produto = from word in produtos
-                            orderby word.Nome
-                            select word;  
-  
-            foreach (var str in produto)  {
+            List<ProdutoGetContainer> produtosHATEOAS = new List<ProdutoGetContainer>();
+            foreach(var produto in produtos){
+            ProdutoGetContainer produtoHateoas = new ProdutoGetContainer();
+            produtoHateoas.Id = produto.Id;
+            produtoHateoas.Codigo = produto.Codigo;
+            produtoHateoas.Nome = produto.Nome;
+            produtoHateoas.Valor = produto.Valor;
+            produtoHateoas.Promocao = produto.Promocao;
+            produtoHateoas.ValorPromocao = produto.ValorPromocao;
+            produtoHateoas.Categoria = produto.Categoria;
+            produtoHateoas.Imagem = produto.Imagem;
+            produtoHateoas.Quantidade = produto.Quantidade;
 
-            }
+            var fornId = database.Fornecedores.First(p=> p.Id == produto.Fornecedor.Id);
+                       
+            produtoHateoas.FornecedorId = fornId.Id;
+
+            produtoHateoas.links = HATEOAS.GetActions(produto.Id.ToString());
+            produtosHATEOAS.Add(produtoHateoas);}
              
+           return Ok(new{produtosHATEOAS}); 
              
-           return Ok(new{produto}); 
         }
 
-         [HttpGet("desc")]   
+        [HttpGet("desc")]   
         public IActionResult ListaAlfDec(){
-            var produtos = database.Produtos.ToList();
+            var produtos = database.Produtos.Include(f=> f.Fornecedor).OrderByDescending(p=> p.Nome).ToList();
 
-            IEnumerable<Produto> produto = from word in produtos
-                            orderby word.Nome descending  
-                            select word;  
-  
-            foreach (var str in produto)  {
+            List<ProdutoGetContainer> produtosHATEOAS = new List<ProdutoGetContainer>();
+            foreach(var produto in produtos){
+            ProdutoGetContainer produtoHateoas = new ProdutoGetContainer();
+            produtoHateoas.Id = produto.Id;
+            produtoHateoas.Codigo = produto.Codigo;
+            produtoHateoas.Nome = produto.Nome;
+            produtoHateoas.Valor = produto.Valor;
+            produtoHateoas.Promocao = produto.Promocao;
+            produtoHateoas.ValorPromocao = produto.ValorPromocao;
+            produtoHateoas.Categoria = produto.Categoria;
+            produtoHateoas.Imagem = produto.Imagem;
+            produtoHateoas.Quantidade = produto.Quantidade;
 
-            }
+            var fornId = database.Fornecedores.First(p=> p.Id == produto.Fornecedor.Id);
+                       
+            produtoHateoas.FornecedorId = fornId.Id;
+
+            produtoHateoas.links = HATEOAS.GetActions(produto.Id.ToString());
+            produtosHATEOAS.Add(produtoHateoas);}
              
+           return Ok(new{produtosHATEOAS}); 
              
-           return Ok(new{produto}); 
         }
-
-           [HttpGet("nome/{nome}")]   
+        
+        [HttpGet("nome/{nome}")]   
         public IActionResult PesquisaNome(string nome){
             try{
-            var produto= database.Produtos.Where(p=> p.Nome.Contains(nome)).ToList();
+            var produtos = database.Produtos.Include(f=> f.Fornecedor).Where(p=> p.Nome.Contains(nome)).ToList();
 
-             List<ProdutoGetContainer> produtosHATEOAS = new List<ProdutoGetContainer>();
-            foreach(var produtos in produto){
-                ProdutoGetContainer produtoHateoas = new ProdutoGetContainer();
-                produtoHateoas.produtos = produtos;
-                produtoHateoas.links = HATEOAS.GetActions(produtos.Id.ToString());
-               produtosHATEOAS.Add(produtoHateoas);}
+            List<ProdutoGetContainer> produtosHATEOAS = new List<ProdutoGetContainer>();
+            foreach(var produto in produtos){
+               ProdutoGetContainer produtoHateoas = new ProdutoGetContainer();
+                produtoHateoas.Id = produto.Id;
+                produtoHateoas.Codigo = produto.Codigo;
+                produtoHateoas.Nome = produto.Nome;
+                produtoHateoas.Valor = produto.Valor;
+                produtoHateoas.Promocao = produto.Promocao;
+                produtoHateoas.ValorPromocao = produto.ValorPromocao;
+                produtoHateoas.Categoria = produto.Categoria;
+                produtoHateoas.Imagem = produto.Imagem;
+                produtoHateoas.Quantidade = produto.Quantidade;
 
-            if(produto.Count == 0){
+                var fornId = database.Fornecedores.First(p=> p.Id == produto.Fornecedor.Id);
+            
+            
+                produtoHateoas.FornecedorId = fornId.Id;
+                produtoHateoas.links = HATEOAS.GetActions(produto.Id.ToString());
+                produtosHATEOAS.Add(produtoHateoas);}
+
+            if(produtos.Count == 0){
             Response.StatusCode = 404;          
             return new ObjectResult (new{msg= "Nome não disponível na lista de produtos"}); }
                
@@ -376,7 +441,7 @@ namespace Desafio_API.Controllers
         }
 
 
-          [HttpPatch]
+        [HttpPatch]
         public IActionResult Editar ([FromBody] ProdutoDTO produto){           
            
             if(produto.Id > 0){
@@ -521,7 +586,20 @@ namespace Desafio_API.Controllers
 
 
          public class ProdutoGetContainer{
+
+            [JsonIgnore]
             public Produto produtos {get; set;}
+            public int Id { get; set; }
+            public string Nome { get; set; }
+            public string Codigo { get; set; }
+            public double Valor { get; set; }
+            public bool Promocao { get; set; }
+            public double ValorPromocao { get; set; }
+            public string Categoria { get; set; }
+            public string Imagem { get; set; }
+            public int Quantidade{get; set;}
+            public int FornecedorId {get; set;}
+        
 
             public Link[] links {get; set;}
         }
