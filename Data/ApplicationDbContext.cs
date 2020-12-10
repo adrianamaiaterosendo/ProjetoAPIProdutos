@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using Microsoft.EntityFrameworkCore;
 using Desafio_API.Models;
-using System.Linq;
 
 
 namespace Desafio_API.Data

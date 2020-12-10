@@ -8,7 +8,6 @@ using Desafio_API.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Desafio_API.HATEOAS;
-using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json;
 
 

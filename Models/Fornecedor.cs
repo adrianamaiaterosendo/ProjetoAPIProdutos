@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using System.Text.Json;
-using Newtonsoft.Json;
 
 namespace Desafio_API.Models
 {

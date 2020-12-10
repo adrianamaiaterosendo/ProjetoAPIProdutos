@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 
 namespace Desafio_API.DTO
 {

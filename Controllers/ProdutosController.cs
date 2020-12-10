@@ -7,7 +7,6 @@ using Desafio_API.Models;
 using Desafio_API.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using System.Text.Json;
 using Newtonsoft.Json;
 using Desafio_API.HATEOAS;
 

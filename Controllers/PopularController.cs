@@ -1,19 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Desafio_API.Data;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Desafio_API.Models;
-using Desafio_API.DTO;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using Desafio_API.HATEOAS;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using CryptSharp;
-using Newtonsoft.Json;
 
 
 namespace Desafio_API.Controllers
