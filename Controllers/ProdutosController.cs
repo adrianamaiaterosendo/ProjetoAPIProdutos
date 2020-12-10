@@ -61,6 +61,8 @@ namespace Desafio_API.Controllers
         }
 
         [HttpPost]
+        [Authorize]    
+
         public IActionResult Post([FromBody] ProdutoDTO pDTO){
             Produto produto = new Produto();
 
@@ -186,6 +188,8 @@ namespace Desafio_API.Controllers
         }
 
         [HttpPut]
+        [Authorize]    
+
         public IActionResult Put([FromBody] ProdutoDTO produto){
 
              if(produto.Id > 0){
@@ -331,6 +335,8 @@ namespace Desafio_API.Controllers
         } 
 
         [HttpDelete("{id}")]
+        [Authorize]    
+
         public IActionResult Delete(int id){
 
                try{
@@ -442,6 +448,8 @@ namespace Desafio_API.Controllers
 
 
         [HttpPatch]
+        [Authorize]    
+
         public IActionResult Editar ([FromBody] ProdutoDTO produto){           
            
             if(produto.Id > 0){

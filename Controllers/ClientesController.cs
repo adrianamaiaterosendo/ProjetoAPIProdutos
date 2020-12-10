@@ -286,6 +286,8 @@ namespace Desafio_API.Controllers
             }     
 
         [HttpDelete("{id}")]
+        [Authorize]    
+
         public IActionResult Delete(int id){
 
                try{

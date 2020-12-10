@@ -64,6 +64,8 @@ namespace Desafio_API.Controllers
         }
        
         [HttpPost]
+        [Authorize]    
+
         public IActionResult Post([FromBody] FornecedorDTO fDTO){
             Fornecedor fornecedor = new Fornecedor();
 
@@ -119,6 +121,8 @@ namespace Desafio_API.Controllers
         }
 
         [HttpPut]
+        [Authorize]    
+
         public IActionResult Put ([FromBody] FornecedorDTO fornecedor){           
            
             if(fornecedor.Id > 0){
@@ -172,6 +176,8 @@ namespace Desafio_API.Controllers
             }  
 
         [HttpPatch]
+        [Authorize]    
+
         public IActionResult Editar ([FromBody] FornecedorDTO fornecedor){           
            
             if(fornecedor.Id > 0){
@@ -225,6 +231,8 @@ namespace Desafio_API.Controllers
             }  
 
         [HttpDelete("{id}")]
+        [Authorize]    
+
         public IActionResult Delete(int id){
 
                try{

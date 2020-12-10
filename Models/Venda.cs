@@ -8,8 +8,6 @@ namespace Desafio_API.Models
     {
         public int Id { get; set; }
 
-        public Fornecedor Fornecedor{get; set;}
-
         public Cliente Cliente {get; set;}
 
         public double TotalCompra {get; set;}

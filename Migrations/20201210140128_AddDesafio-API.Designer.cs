@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Desafio_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201201164405_AddDesafio-API")]
+    [Migration("20201210140128_AddDesafio-API")]
     partial class AddDesafioAPI
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,10 +129,45 @@ namespace Desafio_API.Migrations
                     b.ToTable("Vendas");
                 });
 
+            modelBuilder.Entity("Desafio_API.Models.VendaFornecedor", b =>
+                {
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VendaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FornecedorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProdutoId", "VendaId", "FornecedorId");
+
+                    b.HasIndex("FornecedorId");
+
+                    b.HasIndex("VendaId");
+
+                    b.ToTable("VendaFornecedores");
+                });
+
+            modelBuilder.Entity("Desafio_API.Models.VendaProduto", b =>
+                {
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VendaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProdutoId", "VendaId");
+
+                    b.HasIndex("VendaId");
+
+                    b.ToTable("VendasProdutos");
+                });
+
             modelBuilder.Entity("Desafio_API.Models.Produto", b =>
                 {
                     b.HasOne("Desafio_API.Models.Fornecedor", "Fornecedor")
-                        .WithMany()
+                        .WithMany("Produtos")
                         .HasForeignKey("FornecedorId");
                 });
 
@@ -145,6 +180,42 @@ namespace Desafio_API.Migrations
                     b.HasOne("Desafio_API.Models.Fornecedor", "Fornecedor")
                         .WithMany()
                         .HasForeignKey("FornecedorId");
+                });
+
+            modelBuilder.Entity("Desafio_API.Models.VendaFornecedor", b =>
+                {
+                    b.HasOne("Desafio_API.Models.Fornecedor", "Fornecedores")
+                        .WithMany()
+                        .HasForeignKey("FornecedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Desafio_API.Models.Produto", "Produtos")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Desafio_API.Models.Venda", "Vendas")
+                        .WithMany("VendaFornecedores")
+                        .HasForeignKey("VendaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Desafio_API.Models.VendaProduto", b =>
+                {
+                    b.HasOne("Desafio_API.Models.Produto", "Produtos")
+                        .WithMany("VendaProdutos")
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Desafio_API.Models.Venda", "Vendas")
+                        .WithMany("VendaProdutos")
+                        .HasForeignKey("VendaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

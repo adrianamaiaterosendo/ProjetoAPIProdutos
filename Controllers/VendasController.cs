@@ -16,7 +16,7 @@ namespace Desafio_API.Controllers
     
     [Route("api/v1/[controller]")]
     [ApiController]
-    //[Authorize]    
+    [Authorize]    
     public class VendasController : ControllerBase
     {
         private readonly ApplicationDbContext database;
@@ -34,7 +34,7 @@ namespace Desafio_API.Controllers
         
         [HttpGet]   
         public IActionResult ListaVendas (){
-            var vendas = database.Vendas.Include(p=> p.VendaProdutos).Include(f=> f.Fornecedor).Include(c=> c.Cliente).ToList();
+            var vendas = database.Vendas.Include(p=> p.VendaProdutos).Include(c=> c.Cliente).ToList();
              List<VendasGetContainer> vendasHATEOAS = new List<VendasGetContainer>();
             foreach(var venda in vendas){
             VendasGetContainer vendaHateoas = new VendasGetContainer();
@@ -174,7 +174,7 @@ namespace Desafio_API.Controllers
         public IActionResult Get(int id){
 
             try{
-                var vendas = database.Vendas.Include(p=> p.VendaProdutos).Include(f=> f.Fornecedor).First(f=> f.Id == id);
+                var vendas = database.Vendas.Include(p=> p.VendaProdutos).First(f=> f.Id == id);
                 VendasGetContainer vendaHATEOAS = new VendasGetContainer();
                 vendaHATEOAS.vendas = vendas;
                 vendaHATEOAS.links = HATEOAS.GetActions(vendas.Id.ToString());
