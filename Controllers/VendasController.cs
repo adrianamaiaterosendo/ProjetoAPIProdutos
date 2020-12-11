@@ -247,8 +247,26 @@ namespace Desafio_API.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] VendaDTO vDTO){
             Venda venda = new Venda();
+            
+                var prodBD = vDTO.ProdutosId.ToList();
 
-             
+                if(prodBD.Count <= 0){
+                    Response.StatusCode = 400;
+                    return new ObjectResult (new{msg="Produto não localizado, favor inserir um produto válido!"});
+                }
+                try{
+                List<int> produId = new List<int>();
+                foreach(var verPBD in prodBD){
+                    var verBD = database.Produtos.First(p=> p.Id == verPBD);
+                    produId.Add(verPBD);
+                }; }catch{
+                     Response.StatusCode = 400;
+                    return new ObjectResult (new{msg="Produto não localizado, favor inserir um produto válido!"});
+                }   
+                
+                        
+                
+                      
               if (vDTO.ClienteId <= 0){
                 Response.StatusCode = 400;
                 return new ObjectResult (new{msg="Id de cliente inválido!"});
@@ -267,7 +285,7 @@ namespace Desafio_API.Controllers
                    database.SaveChanges();   
 
                 foreach (var produtosId in vDTO.ProdutosId){
-                       
+                                           
                         VendaProduto vendasProdutos1 = new VendaProduto();
                         vendasProdutos1.ProdutoId = produtosId;
                         vendasProdutos1.VendaId = venda.Id;
@@ -302,6 +320,7 @@ namespace Desafio_API.Controllers
                         totalCompra = produtoVendas.Valor + totalCompra;
 
                         }
+                        
 
                     };
 
@@ -313,14 +332,13 @@ namespace Desafio_API.Controllers
                    
                 database.SaveChanges();      
 
+              Response.StatusCode = 201;
+              return new ObjectResult (new{msg = "Venda efetuada com sucesso! Valor total: R$ " + totalCompra });
+            
+              
 
-
-
-         
-
-           
-            Response.StatusCode = 201;
-            return new ObjectResult (new{msg = "Venda efetuada com sucesso! Valor total: R$ " + totalCompra });
+              
+            
         }
 
         [HttpPatch]

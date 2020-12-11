@@ -9,8 +9,6 @@ namespace Desafio_API.DTO
         
         public int Id { get; set; }
 
-        //public int FornecedorId{get; set;}
-
         public int ClienteId {get; set;}
 
         public List<int> ProdutosId {get; set;}
