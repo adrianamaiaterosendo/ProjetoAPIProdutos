@@ -16,7 +16,7 @@ namespace Desafio_API.Controllers
     
     [Route("api/v1/[controller]")]
     [ApiController]
-    //[Authorize]    
+    [Authorize]    
     public class VendasController : ControllerBase
     {
         private readonly ApplicationDbContext database;
