@@ -16,7 +16,7 @@ namespace Desafio_API.Controllers
     
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize]    
+    //[Authorize]    
     public class VendasController : ControllerBase
     {
         private readonly ApplicationDbContext database;
@@ -320,7 +320,7 @@ namespace Desafio_API.Controllers
 
            
             Response.StatusCode = 201;
-            return new ObjectResult (new{msg = "Venda efetuada com sucesso!" });
+            return new ObjectResult (new{msg = "Venda efetuada com sucesso! Valor total: R$ " + totalCompra });
         }
 
         [HttpPatch]

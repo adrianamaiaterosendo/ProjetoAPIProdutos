@@ -65,6 +65,13 @@ namespace Desafio_API.Controllers
         public IActionResult Post([FromBody] ProdutoDTO pDTO){
             Produto produto = new Produto();
 
+            try{ var proBD = database.Produtos.First(p=> p.Codigo == pDTO.Codigo);
+                 Response.StatusCode = 400;
+                return new ObjectResult (new{msg="Código de Produto já cadastrado no Banco de Dados! Nome: " + proBD.Nome});
+                
+
+            }catch{
+
               if(pDTO.Nome.Length <= 4){
                 Response.StatusCode = 400;
                 return new ObjectResult (new{msg="Favor inserir um nome válido, com pelo menos 5 caracteres!"});
@@ -100,6 +107,7 @@ namespace Desafio_API.Controllers
                           return new ObjectResult (new{msg="Favor inserir o valor zero no campo Valor Promoção!"});
                         }
                     }
+                }
                
              
                 

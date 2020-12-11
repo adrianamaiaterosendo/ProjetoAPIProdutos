@@ -68,6 +68,14 @@ namespace Desafio_API.Controllers
         public IActionResult Post([FromBody] FornecedorDTO fDTO){
             Fornecedor fornecedor = new Fornecedor();
 
+            try{
+                var fornBD = database.Fornecedores.First(f=> f.CNPJ == fDTO.CNPJ);
+                Response.StatusCode = 400;
+                return new ObjectResult (new{msg="CNPJ já existente no Banco de Dados! Nome: " + fornBD.Nome});                
+
+            }catch{                     
+                
+
               if(fDTO.Nome.Length <= 4){
                 Response.StatusCode = 400;
                 return new ObjectResult (new{msg="Favor inserir um nome válido, com pelo menos 5 caracteres!"});
@@ -85,6 +93,7 @@ namespace Desafio_API.Controllers
            
             Response.StatusCode = 201;
             return new ObjectResult (new{msg = "Fornecedor cadastrado com sucesso!" });
+         }
         }
 
         [HttpGet("{id}")]
